@@ -1,12 +1,11 @@
+import os
+import logging
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     ContextTypes
 )
-import os
-import asyncio
-import logging
 
 # ===============================
 # CONFIGURAÇÃO DE LOG
@@ -24,7 +23,7 @@ logger = logging.getLogger(__name__)
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 if not TELEGRAM_TOKEN:
-    raise RuntimeError("TELEGRAM_TOKEN não encontrado nas variáveis de ambiente")
+    raise RuntimeError("❌ TELEGRAM_TOKEN não encontrado nas variáveis de ambiente")
 
 # ===============================
 # COMANDOS DO BOT
@@ -32,5 +31,28 @@ if not TELEGRAM_TOKEN:
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🤖 Robô de negociação ONLINE!\n\n"
-        "Estou rodando 24h no Railway.\n"
-        "Aguardando
+        "⏱️ Rodando 24h no Railway\n"
+        "📡 Aguardando sinais..."
+    )
+
+async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "✅ Status OK\n"
+        "🤖 Robô ativo\n"
+        "⏳ Aguardando sinais"
+    )
+
+# ===============================
+# INICIALIZAÇÃO DO BOT
+# ===============================
+async def iniciar_bot():
+    logger.info("📲 Iniciando Bot do Telegram...")
+
+    application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("status", status))
+
+    logger.info("🤖 Bot do Telegram iniciado com sucesso")
+
+    await application.run_polling()
