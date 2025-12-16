@@ -1,35 +1,36 @@
 from telegram.ext import Updater, CommandHandler
 from config import TELEGRAM_TOKEN
-from state import ligar, desligar, status
+from state import set_robot_on, set_robot_off, is_robot_on
 
 def start(update, context):
     update.message.reply_text(
         "🤖 Robô online.\n\n"
         "Comandos disponíveis:\n"
-        "/on  → ligar robô\n"
-        "/off → desligar robô\n"
-        "/status → ver status"
+        "/on - ligar robô\n"
+        "/off - desligar robô\n"
+        "/status - ver status"
     )
 
-def on(update, context):
-    ligar()
+def ligar(update, context):
+    set_robot_on()
     update.message.reply_text("✅ Robô LIGADO (24h).")
 
-def off(update, context):
-    desligar()
-    update.message.reply_text("⛔ Robô DESLIGADO.")
+def desligar(update, context):
+    set_robot_off()
+    update.message.reply_text("⏸️ Robô DESLIGADO.")
 
-def stat(update, context):
-    s = "LIGADO ✅" if status() else "DESLIGADO ⛔"
-    update.message.reply_text(f"📊 Status atual: {s}")
+def status(update, context):
+    estado = "LIGADO" if is_robot_on() else "DESLIGADO"
+    update.message.reply_text(f"📊 Status atual: {estado}")
 
 def iniciar_bot():
-    updater = Updater(TELEGRAM_TOKEN, use_context=True)
+    updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("on", on))
-    dp.add_handler(CommandHandler("off", off))
-    dp.add_handler(CommandHandler("status", stat))
+    dp.add_handler(CommandHandler("on", ligar))
+    dp.add_handler(CommandHandler("off", desligar))
+    dp.add_handler(CommandHandler("status", status))
 
     updater.start_polling()
+    updater.idle()
