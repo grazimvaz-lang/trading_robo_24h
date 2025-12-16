@@ -1,12 +1,20 @@
+import threading
+import time
+
 from trader import iniciar_trader
 from telegram_bot import iniciar_bot
-import threading
 
+print("🔥 MAIN.PY CARREGADO COM SUCESSO")
 print("🚀 Robô 24h iniciado")
 
-# Inicia o trader em thread separada
-thread_trader = threading.Thread(target=iniciar_trader, daemon=True)
-thread_trader.start()
+# Trader
+threading.Thread(target=iniciar_trader, daemon=True).start()
 
-# Inicia o bot do Telegram (processo principal)
-iniciar_bot()
+# Telegram
+threading.Thread(target=iniciar_bot, daemon=True).start()
+
+print("🧠 Threads do Trader e Telegram disparadas")
+
+# Mantém o processo vivo
+while True:
+    time.sleep(60)
