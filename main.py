@@ -1,14 +1,12 @@
-import threading
 from trader import iniciar_trader
 from telegram_bot import iniciar_bot
+import threading
 
-def main():
-    print("🚀 Robô 24h iniciado")
+print("🚀 Robô 24h iniciado")
 
-    trader_thread = threading.Thread(target=iniciar_trader, daemon=True)
-    trader_thread.start()
+# Inicia o trader em thread separada
+thread_trader = threading.Thread(target=iniciar_trader, daemon=True)
+thread_trader.start()
 
-    iniciar_bot()
-
-if __name__ == "__main__":
-    main()
+# Inicia o bot do Telegram (processo principal)
+iniciar_bot()
