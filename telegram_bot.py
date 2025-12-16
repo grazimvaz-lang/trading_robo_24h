@@ -9,8 +9,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def iniciar_bot():
     print("🚀 Iniciando Telegram puro v20")
-
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
-
     await app.run_polling()
