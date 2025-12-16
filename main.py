@@ -1,12 +1,17 @@
 import asyncio
+import threading
 from telegram_bot import iniciar_bot
 from trader import iniciar_trader
 
 print("🔥 MAIN.PY CARREGADO COM SUCESSO")
-print("🚀 Robô 24h iniciado")
 
-# Trader em loop (thread ou síncrono, como já está)
-iniciar_trader()
+# Trader em thread
+threading.Thread(
+    target=iniciar_trader,
+    daemon=True
+).start()
 
-# Telegram (async)
+print("📈 Trader iniciado (modo contínuo)")
+
+# Telegram é o processo principal
 asyncio.run(iniciar_bot())
