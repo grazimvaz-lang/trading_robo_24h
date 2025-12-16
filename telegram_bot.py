@@ -1,4 +1,5 @@
 import os
+import asyncio
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -6,19 +7,10 @@ from telegram.ext import (
     ContextTypes
 )
 
-# =========================
-# Comando /start
-# =========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 Robô de negociação 24h ONLINE e funcionando!"
-    )
+    await update.message.reply_text("🤖 Robô 24h online e funcionando!")
 
-# =========================
-# Inicialização do Bot
-# =========================
-def iniciar_bot():
-    print("🔥 ENTREI NA FUNÇÃO iniciar_bot()")
+async def iniciar_bot():
     print("🔍 Verificando TELEGRAM_TOKEN...")
 
     token = os.getenv("TELEGRAM_TOKEN")
@@ -30,9 +22,10 @@ def iniciar_bot():
     print("📲 TELEGRAM_TOKEN encontrado")
     print("🚀 Iniciando Bot do Telegram...")
 
-    application = ApplicationBuilder().token(token).build()
+    app = ApplicationBuilder().token(token).build()
 
-    application.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("start", start))
 
     print("✅ Bot do Telegram iniciado e aguardando comandos")
-    application.run_polling()
+
+    await app.run_polling()
