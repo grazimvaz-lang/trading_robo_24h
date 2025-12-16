@@ -1,5 +1,4 @@
 import os
-import logging
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -7,52 +6,19 @@ from telegram.ext import (
     ContextTypes
 )
 
-# ===============================
-# CONFIGURAÇÃO DE LOG
-# ===============================
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
-
-logger = logging.getLogger(__name__)
-
-# ===============================
-# TOKEN DO TELEGRAM
-# ===============================
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-
-if not TELEGRAM_TOKEN:
-    raise RuntimeError("❌ TELEGRAM_TOKEN não encontrado nas variáveis de ambiente")
-
-# ===============================
-# COMANDOS DO BOT
-# ===============================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 Robô de negociação ONLINE!\n\n"
-        "⏱️ Rodando 24h no Railway\n"
-        "📡 Aguardando sinais..."
-    )
+    await update.message.reply_text("🤖 Robô 24h online e funcionando!")
 
-async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "✅ Status OK\n"
-        "🤖 Robô ativo\n"
-        "⏳ Aguardando sinais"
-    )
+def iniciar_bot():
+    token = os.getenv("TELEGRAM_TOKEN")
 
-# ===============================
-# INICIALIZAÇÃO DO BOT
-# ===============================
-async def iniciar_bot():
-    logger.info("📲 Iniciando Bot do Telegram...")
+    if not token:
+        print("⚠️ TELEGRAM_TOKEN não configurado. Bot Telegram desativado.")
+        return  # NÃO quebra o robô
 
-    application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+    print("📲 Iniciando Bot do Telegram...")
 
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("status", status))
+    app = ApplicationBuilder().token(token).build()
+    app.add_handler(CommandHandler("start", start))
 
-    logger.info("🤖 Bot do Telegram iniciado com sucesso")
-
-    await application.run_polling()
+    app.run_polling()
