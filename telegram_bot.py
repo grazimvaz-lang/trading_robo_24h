@@ -1,5 +1,4 @@
 import os
-import asyncio
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -11,9 +10,6 @@ BOT_LIGADO = False
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 
-# ======================
-# COMANDOS
-# ======================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🤖 Robô online!\n\n"
@@ -22,15 +18,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/status"
     )
 
+
 async def ligar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global BOT_LIGADO
     BOT_LIGADO = True
     await update.message.reply_text("✅ Robô LIGADO")
 
+
 async def desligar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global BOT_LIGADO
     BOT_LIGADO = False
     await update.message.reply_text("⛔ Robô DESLIGADO")
+
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -38,17 +37,11 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ======================
-# LOOP 24H
-# ======================
-async def loop_24h(context: ContextTypes.DEFAULT_TYPE):
+def loop_24h(context: ContextTypes.DEFAULT_TYPE):
     if BOT_LIGADO:
         print("🔁 Robô rodando 24h...")
 
 
-# ======================
-# INICIALIZAÇÃO (SINCRONA!)
-# ======================
 def iniciar_bot():
     if not TOKEN:
         raise RuntimeError("TELEGRAM_TOKEN não definido")
@@ -60,10 +53,10 @@ def iniciar_bot():
     app.add_handler(CommandHandler("desligar", desligar))
     app.add_handler(CommandHandler("status", status))
 
-    # roda a cada 5 segundos
+    # loop a cada 5 segundos
     app.job_queue.run_repeating(loop_24h, interval=5, first=5)
 
     print("🚀 Bot Telegram em polling 24h")
 
-    # ✅ ÚNICO LOOP – CORRETO
+    # ⚠️ SEM await / SEM asyncio
     app.run_polling(drop_pending_updates=True)
